@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿
 
 namespace UsersService.Models
 {
-    public class ApplicationUser: IdentityUser
+    public class User
     {
         // // UserId, DisplayName, Bio, AvatarUrl, CreatedAt
+
+        public string UserId { get; set; }
 
         public string DisplayName { get; set; }
 

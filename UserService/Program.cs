@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using UsersService.Database;
 using UsersService.Models;
+using UsersService.Repos.Contracts;
+using UsersService.Repos.Implementations;
 using UsersService.Services.Contracts;
 using UsersService.Services.Implementations;
 
@@ -21,10 +23,7 @@ builder.Services.AddDbContext<UserDbContext>(opts =>
 });
 
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-          .AddEntityFrameworkStores<UserDbContext>()
-          .AddDefaultTokenProviders();
-
+builder.Services.AddScoped<IUserRepo, UserRepo>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 

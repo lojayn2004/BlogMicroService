@@ -5,14 +5,17 @@ using UsersService.Models;
 
 namespace UsersService.Database.Configurations
 {
-    public class UserConfigurations: IEntityTypeConfiguration<ApplicationUser>
+    public class UserConfigurations: IEntityTypeConfiguration<User>
     {
-        public void Configure(EntityTypeBuilder<ApplicationUser> builder)
+        public void Configure(EntityTypeBuilder<User> builder)
         {
-       
+
+            builder.HasKey(e => e.UserId);
 
             builder.Property(e => e.DisplayName)
                    .HasMaxLength(100);
+
+
             builder.Property(e => e.Bio)
                    .HasMaxLength(500);
             builder.Property(e => e.AvatarUrl)

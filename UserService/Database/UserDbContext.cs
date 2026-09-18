@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using UsersService.Database.Configurations;
 using UsersService.Models;
 
 namespace UsersService.Database
 {
-    public class UserDbContext: IdentityDbContext<ApplicationUser>
+    public class UserDbContext: DbContext
     {
         
         public UserDbContext(DbContextOptions<UserDbContext> options) : base(options)
@@ -21,7 +19,7 @@ namespace UsersService.Database
             builder.ApplyConfiguration(new UserConfigurations());
         }
 
-        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<User> Users { get; set; }
 
     }
 }
