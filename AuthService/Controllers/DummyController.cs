@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace AuthService.Controllers
 {
     [ApiController]
-    [Route("dummy")]
+    [Route("api/dummy")]
     public class DummyController: ControllerBase    
     {
-        [Authorize]
+
 
         [HttpGet]
         public string GetAsync()
