@@ -5,6 +5,7 @@ using AuthService.Dtos.Result;
 using AuthService.Services.ServicesAbstractions;
 using AuthService.Utils;
 using AuthService.Models;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace AuthService.Services.Implementations
@@ -21,14 +22,38 @@ namespace AuthService.Services.Implementations
             var isPasswordValid = await _userManager.CheckPasswordAsync(user, loginDto.Password);
             if (!isPasswordValid)
                 return ServiceResult<AuthResponseDto>.Error(ServiceError.UnAuthorized, "Incorrect Email Or Password");
+           
+            var authDto = await GetAuthResponseDtoAsync(user);
 
-            var authDto =  new AuthResponseDto
-            {
-                UserId = user.Id,
-                Email = user.Email,
-                Token = await JwtHelper.GenerateJwtTokenAsync(user, _userManager, _jwtOptions)
-            };
+          
             return ServiceResult<AuthResponseDto>.Ok(authDto);
+        }
+
+        public async Task<ServiceResult<AuthResponseDto>> RefreshTokenAsync(string refreshToken)
+        {
+            var authModel = new AuthResponseDto();
+            var user = await _userManager.Users.SingleOrDefaultAsync(u => u.RefreshTokens.Any(t => t.Token == refreshToken));
+            if (user == null)
+                return ServiceResult<AuthResponseDto>.Error(ServiceError.UnAuthorized, "Invalid Token");
+
+            var refreshTokenEntity = user.RefreshTokens.SingleOrDefault(t => t.Token == refreshToken);
+            if(!(refreshTokenEntity.IsActive))
+                return ServiceResult<AuthResponseDto>.Error(ServiceError.UnAuthorized, "Token Expired");
+
+            refreshTokenEntity.RevokedOn = DateTime.UtcNow;
+
+            var newRefreshToken = JwtHelper.GenerateRefreshToken();
+            user.RefreshTokens.Add(newRefreshToken);
+            await _userManager.UpdateAsync(user);
+
+            authModel.UserId = user.Id;
+            authModel.Email = user.Email;
+            authModel.Token = await JwtHelper.GenerateJwtTokenAsync(user, _userManager, _jwtOptions);
+            authModel.RefreshToken = newRefreshToken.Token;
+            authModel.RefreshTokenExpiration = newRefreshToken.ExpiresOn;
+
+            return ServiceResult<AuthResponseDto>.Ok(authModel);
+
         }
 
         public async Task<ServiceResult<AuthResponseDto>> RegisterAsync(RegisterDto registerDto)
@@ -66,6 +91,32 @@ namespace AuthService.Services.Implementations
             return ServiceResult<AuthResponseDto>.Ok(authDto);
         }
 
+
+
+        private async Task<AuthResponseDto> GetAuthResponseDtoAsync(ApplicationUser user)
+        {
+            var authDto = new AuthResponseDto
+            {
+                UserId = user.Id,
+                Email = user.Email,
+                Token = await JwtHelper.GenerateJwtTokenAsync(user, _userManager, _jwtOptions)
+            };
+            if (user.RefreshTokens.Any(t => t.IsActive))
+            {
+                var activeRefreshToken = user.RefreshTokens.FirstOrDefault(t => t.IsActive);
+                authDto.RefreshToken = activeRefreshToken.Token;
+                authDto.RefreshTokenExpiration = activeRefreshToken.ExpiresOn;
+            }
+            else
+            {
+                var refreshToken = JwtHelper.GenerateRefreshToken();
+                user.RefreshTokens.Add(refreshToken);
+                await _userManager.UpdateAsync(user);
+                authDto.RefreshToken = refreshToken.Token;
+                authDto.RefreshTokenExpiration = refreshToken.ExpiresOn;
+            }
+            return authDto;
+        }
      
     }
 }

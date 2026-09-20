@@ -8,5 +8,10 @@ namespace AuthService.Services.ServicesAbstractions
         public Task<ServiceResult<AuthResponseDto>> LoginAsync(LoginDto loginDto);
 
         public Task<ServiceResult<AuthResponseDto>> RegisterAsync(RegisterDto registerDto);
+    
+
+        public Task<ServiceResult<AuthResponseDto>> RefreshTokenAsync(string refreshToken);
+
+
     }
 }

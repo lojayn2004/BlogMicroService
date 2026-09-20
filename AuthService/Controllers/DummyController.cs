@@ -8,7 +8,7 @@ namespace AuthService.Controllers
     public class DummyController: ControllerBase    
     {
 
-
+        [Authorize]
         [HttpGet]
         public string GetAsync()
         {
