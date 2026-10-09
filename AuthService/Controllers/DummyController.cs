@@ -7,8 +7,6 @@ namespace AuthService.Controllers
     [Route("api/dummy")]
     public class DummyController: ControllerBase    
     {
-
-        [Authorize]
         [HttpGet]
         public string GetAsync()
         {

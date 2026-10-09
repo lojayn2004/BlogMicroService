@@ -9,12 +9,12 @@ namespace UsersService.Controllers
 
     public class UserController(IUserService _userService) : ApiBaseController
     {
-        [HttpPost]
-        public async Task<IActionResult> CreateUserAsync(CreateUserDto createUserDto)
-        {
-            var createUserResult = await _userService.CreateAsync(createUserDto);
-            return GetActionResult(createUserResult);
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> CreateUserAsync(CreateUserDto createUserDto)
+        //{
+        //    var createUserResult = await _userService.CreateAsync(createUserDto);
+        //    return GetActionResult(createUserResult);
+        //}
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserByIdAsync(string id)

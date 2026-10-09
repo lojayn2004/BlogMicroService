@@ -1,3 +1,4 @@
+using MassTransit;
 using AuthService.Database;
 using AuthService.Dtos.Auth;
 using AuthService.Models;
@@ -32,6 +33,18 @@ builder.Services.Configure<JwtConfigurations>(builder.Configuration.GetSection("
 
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
+builder.Services.AddMassTransit(x =>
+{
+    x.AddRequestClient<Shared.Events.UserCreatedEvent>();
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("localhost", "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
+    });
+});
 
 builder.Services.AddAuthentication(options =>
 {

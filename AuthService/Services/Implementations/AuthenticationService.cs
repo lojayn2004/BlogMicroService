@@ -6,12 +6,14 @@ using AuthService.Services.ServicesAbstractions;
 using AuthService.Utils;
 using AuthService.Models;
 using Microsoft.EntityFrameworkCore;
-
+using MassTransit;
+using Shared.Events;
 
 namespace AuthService.Services.Implementations
 {
     public class AuthenticationService(UserManager<ApplicationUser> _userManager, 
-         IOptions<JwtConfigurations> _jwtOptions): IAuthenticationService
+         IOptions<JwtConfigurations> _jwtOptions,
+         IRequestClient<UserCreatedEvent> _requestClient): IAuthenticationService
     {
         public async Task<ServiceResult<AuthResponseDto>> LoginAsync(LoginDto loginDto)
         {
@@ -76,8 +78,22 @@ namespace AuthService.Services.Implementations
                 
             }
 
-            // cal user service to add the user 
-          
+            // call user service to add the user and wait for response
+            var response = await _requestClient.GetResponse<UserCreatedResponse>(new UserCreatedEvent
+            {
+                UserId = applicationUser.Id,
+                Email = applicationUser.Email,
+                UserName = applicationUser.UserName,
+                Bio = registerDto.Bio,
+                AvatarUrl = registerDto.AvatarUrl
+            });
+
+            if (!response.Message.IsSuccess)
+            {
+                // Delete user from identity since profile creation failed
+                await _userManager.DeleteAsync(applicationUser);
+                return ServiceResult<AuthResponseDto>.Error(ServiceError.Validation, $"Failed to create user profile: {response.Message.ErrorMessage}");
+            }
 
             string token = await JwtHelper.GenerateJwtTokenAsync(applicationUser, _userManager, _jwtOptions);
            

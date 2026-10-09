@@ -6,6 +6,8 @@ using UsersService.Repos.Contracts;
 using UsersService.Repos.Implementations;
 using UsersService.Services.Contracts;
 using UsersService.Services.Implementations;
+using MassTransit;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +28,26 @@ builder.Services.AddDbContext<UserDbContext>(opts =>
 builder.Services.AddScoped<IUserRepo, UserRepo>();
 
 builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<UsersService.Consumers.UserCreatedEventConsumer>();
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("localhost", "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
+
+        cfg.ReceiveEndpoint("user-created-queue", e =>
+        {
+            e.ConfigureConsumer<UsersService.Consumers.UserCreatedEventConsumer>(context);
+        });
+    });
+});
+
 
 var app = builder.Build();
 
