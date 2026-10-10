@@ -27,7 +27,7 @@ namespace BlogService.Repos.Implementations
 
         public async Task<Blog?> GetByIdAsync(Guid id)
         {
-            return await GetByIdAsync(id);
+            return await _blogContext.Blogs.FindAsync(id);
         }
 
         public void Update(Blog blog)

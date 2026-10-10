@@ -8,11 +8,12 @@ using AuthService.Models;
 using Microsoft.EntityFrameworkCore;
 using MassTransit;
 using Shared.Events;
+using Shared.JwtConfig;
 
 namespace AuthService.Services.Implementations
 {
     public class AuthenticationService(UserManager<ApplicationUser> _userManager, 
-         IOptions<JwtConfigurations> _jwtOptions,
+         IOptions<JwtConfiguration> _jwtOptions,
          IRequestClient<UserCreatedEvent> _requestClient): IAuthenticationService
     {
         public async Task<ServiceResult<AuthResponseDto>> LoginAsync(LoginDto loginDto)

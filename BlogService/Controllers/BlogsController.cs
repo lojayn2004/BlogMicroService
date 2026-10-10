@@ -1,12 +1,14 @@
 ﻿using BlogService.Dtos.Blog;
-using BlogService.Dtos.Result;
 using BlogService.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BlogService.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class BlogsController(IBlogService _blogService): ApiBaseController
     {
 
@@ -27,23 +29,37 @@ namespace BlogService.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> UpdateBlogAsync(BlogDto blogDto)
         {
-            var updateBlogResult = await _blogService.UpdateBlogAsync(blogDto);
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if(string.IsNullOrEmpty(userId))
+                return Unauthorized();
+            
+            var updateBlogResult = await _blogService.UpdateBlogAsync(userId, blogDto);
             return GetActionResult(updateBlogResult);
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult CreateBlogAsync(CreateBlogDto createBlogDto)
         {
-            var createBlogResult =  _blogService.CreateBlogAsync(createBlogDto);
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+            Console.WriteLine($"UserId: {userId}, Title: {createBlogDto.Title}, Body: {createBlogDto.Body}");
+            var createBlogResult =  _blogService.CreateBlogAsync(userId, createBlogDto);
             return GetActionResult(createBlogResult);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult>  DeleteBlogAsync(Guid id)
         {
-            var deleteBlogResult = await _blogService.DeleteBlogAsync(id, "");
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+            var deleteBlogResult = await _blogService.DeleteBlogAsync(userId, id);
             return GetActionResult(deleteBlogResult);
         }
     }

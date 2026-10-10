@@ -8,7 +8,8 @@ namespace BlogService.Mappers
     {
         public BlogProfile()
         {
-            CreateMap<CreateBlogDto, BlogDto>();
+            CreateMap<CreateBlogDto, Blog>();
+
 
             CreateMap<Blog, BlogDto>();
         }

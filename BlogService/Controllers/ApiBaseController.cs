@@ -1,10 +1,12 @@
 ﻿using BlogService.Dtos.Result;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BlogService.Controllers
 {
     public class ApiBaseController: ControllerBase
     {
+        
         protected IActionResult GetActionResult<T>(ServiceResult<T> result)
         {
             if (result.IsSuccess == true)

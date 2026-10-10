@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using System.Text;
 
-using AuthService.Dtos.Auth;
+using Shared.JwtConfig;
 using AuthService.Models;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
@@ -17,7 +17,7 @@ namespace AuthService.Utils
         
         public static async Task<string> GenerateJwtTokenAsync(ApplicationUser user, 
             UserManager<ApplicationUser> _userManager,
-         IOptions<JwtConfigurations> _jwtOptions)
+         IOptions<JwtConfiguration> _jwtOptions)
         {
             var claims = await GetClaimsAsync(user, _userManager);
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Value.Key));
@@ -44,7 +44,7 @@ namespace AuthService.Utils
             return new RefreshToken
             {
                 Token = Convert.ToBase64String(randomNumber),
-                ExpiresOn = DateTime.UtcNow.AddMinutes(1),
+                ExpiresOn = DateTime.UtcNow.AddMinutes(60),
                 CreatedOn = DateTime.UtcNow
             };
 

@@ -10,11 +10,12 @@ namespace BlogService.Services.Contracts
 
         Task<ServiceResult<BlogDto?>> GetBlogByIdAsync(Guid id);
 
-        Task<ServiceResult<BlogDto>> UpdateBlogAsync(BlogDto blogDto);
+        ServiceResult<BlogDto> CreateBlogAsync(string userId, CreateBlogDto createBlogDto);
 
-        ServiceResult<BlogDto> CreateBlogAsync(CreateBlogDto createBlogDto);
+        Task<ServiceResult<BlogDto>> UpdateBlogAsync(string userId, BlogDto blogDto);
 
-        Task<ServiceResult<string>> DeleteBlogAsync(Guid id, string UserId);
+      
+        Task<ServiceResult<string>> DeleteBlogAsync(string userId, Guid blogId);
 
     }
 }

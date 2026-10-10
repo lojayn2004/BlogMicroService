@@ -7,22 +7,26 @@ using BlogService.Services.Contracts;
 
 namespace BlogService.Services.Implementations
 {
-    public class BlogService(IBlogRepo _blogRepo, IMapper _mapper): IBlogService
+    public class BlogsService(IBlogRepo _blogRepo, IMapper _mapper): IBlogService
     {
-        public ServiceResult<BlogDto> CreateBlogAsync(CreateBlogDto createBlogDto)
+        public ServiceResult<BlogDto> CreateBlogAsync(string userId, CreateBlogDto createBlogDto)
         {
             var blog = _mapper.Map<Blog>(createBlogDto);
+            blog.AuthorId = userId;
             _blogRepo.Create(blog);
             return ServiceResult<BlogDto>.Success(_mapper.Map<BlogDto>(blog));
         }
 
-        public async Task<ServiceResult<string>> DeleteBlogAsync(Guid id, string UserId)
+        public async Task<ServiceResult<string>> DeleteBlogAsync(string userId, Guid blogId)
         {
-            var blog = await _blogRepo.GetByIdAsync(id);
+            var blog = await _blogRepo.GetByIdAsync(blogId);
             if (blog == null)
-                return ServiceResult<string>.Faliure(ResultType.NotFound, $"Blog with id {id} No Found");
-             _blogRepo.Delete(blog);
-            return ServiceResult<string>.Success($"Blog With Id {id} Deleted Successfully");
+                return ServiceResult<string>.Faliure(ResultType.NotFound, $"Blog with id {blogId} No Found");
+            if (blog.AuthorId != userId)
+                return ServiceResult<string>.Faliure(ResultType.UnAuthorized, $"You are not authorized to update this blog");
+
+            _blogRepo.Delete(blog);
+            return ServiceResult<string>.Success($"Blog With Id {blogId} Deleted Successfully");
         }
 
         public async Task<ServiceResult<BlogDto?>> GetBlogByIdAsync(Guid id)
@@ -42,12 +46,16 @@ namespace BlogService.Services.Implementations
             return ServiceResult<IReadOnlyList <BlogDto>>.Success(mappedBlogs);
         }
 
-        public async Task<ServiceResult<BlogDto>> UpdateBlogAsync(BlogDto blogDto)
+        public async Task<ServiceResult<BlogDto>> UpdateBlogAsync(string userId, BlogDto blogDto)
         {
             var blog = await _blogRepo.GetByIdAsync(blogDto.Id);
             if (blog == null)
                 return ServiceResult<BlogDto>.Faliure(ResultType.NotFound, $"Blog with id {blogDto.Id} No Found");
-             _mapper.Map(blogDto, blog);
+             
+            if(blog.AuthorId != userId)
+                return ServiceResult<BlogDto>.Faliure(ResultType.UnAuthorized, $"You are not authorized to update this blog");
+           
+            _mapper.Map(blogDto, blog);
             var mappedBlog = _mapper.Map<BlogDto>(blog);
             return ServiceResult<BlogDto>.Success(mappedBlog);
         }

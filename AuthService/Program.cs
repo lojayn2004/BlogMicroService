@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Shared.JwtConfig;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +30,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddDefaultTokenProviders();
 
 
-builder.Services.Configure<JwtConfigurations>(builder.Configuration.GetSection("JWT"));
+builder.Services.Configure<JwtConfiguration>(builder.Configuration.GetSection("JWT"));
 
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
@@ -46,25 +47,27 @@ builder.Services.AddMassTransit(x =>
     });
 });
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-               .AddJwtBearer(options =>
-               {
-                   options.TokenValidationParameters = new TokenValidationParameters
-                   {
-                       ValidateIssuer = true,
-                       ValidateAudience = true,
-                       ValidateLifetime = true,
-                       ValidateIssuerSigningKey = true,
-                       ValidIssuer = builder.Configuration["JWT:Issuer"],
-                       ValidAudience = builder.Configuration["JWT:Audience"],
-                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
-                       ClockSkew = TimeSpan.Zero 
-                   };
-               });
+builder.Services.AddSharedJwtAuth(builder.Configuration);
+
+//builder.Services.AddAuthentication(options =>
+//{
+//    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//})
+//               .AddJwtBearer(options =>
+//               {
+//                   options.TokenValidationParameters = new TokenValidationParameters
+//                   {
+//                       ValidateIssuer = true,
+//                       ValidateAudience = true,
+//                       ValidateLifetime = true,
+//                       ValidateIssuerSigningKey = true,
+//                       ValidIssuer = builder.Configuration["JWT:Issuer"],
+//                       ValidAudience = builder.Configuration["JWT:Audience"],
+//                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
+//                       ClockSkew = TimeSpan.Zero 
+//                   };
+//               });
 
 var app = builder.Build();
 

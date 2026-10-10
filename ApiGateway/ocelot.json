@@ -13,7 +13,11 @@
           "Host": "localhost",
           "Port": 7248
         }
-      ]
+      ],
+
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "BlogServiceJwt"
+      }
     },
     {
       "UpstreamPathTemplate": "/gateway/auth/{everything}",
@@ -29,7 +33,22 @@
     },
     {
       "UpstreamPathTemplate": "/gateway/blog/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "UpstreamHttpMethod": [ "POST", "PUT", "DELETE" ],
+      "DownstreamPathTemplate": "/api/blogs/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7065
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "BlogServiceJwt"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/blog/{everything}",
+      "UpstreamHttpMethod": [ "GET" ],
       "DownstreamPathTemplate": "/api/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
