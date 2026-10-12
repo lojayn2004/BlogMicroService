@@ -37,8 +37,7 @@ namespace AuthService.Controllers
             return GetActionResult(result);
         }
 
-        // refresh
-
+       
         [HttpGet("refresh")]
         public async Task<IActionResult> RefreshTokenAsync()
         {

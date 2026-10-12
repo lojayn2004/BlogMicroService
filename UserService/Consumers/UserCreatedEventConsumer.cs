@@ -1,8 +1,7 @@
 using MassTransit;
 using Shared.Events;
 using UsersService.Dtos.Users;
-using UsersService.Models;
-using UsersService.Repos.Contracts;
+
 using UsersService.Services.Contracts;
 
 namespace UsersService.Consumers;
@@ -23,8 +22,13 @@ public class UserCreatedEventConsumer(IUserService _userService): IConsumer<User
                 AvatarUrl = message.AvatarUrl
             };
 
-            await _userService.CreateAsync(newUser);
+            var result = await _userService.CreateAsync(newUser);
 
+            if(!result.IsSuccess) 
+            {
+                await context.RespondAsync(new UserCreatedResponse { IsSuccess = false, ErrorMessage = result.Message });
+                return;
+            }
             await context.RespondAsync(new UserCreatedResponse { IsSuccess = true });
         }
         catch (Exception ex)

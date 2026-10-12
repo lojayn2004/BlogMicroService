@@ -1,15 +1,13 @@
 using MassTransit;
 using AuthService.Database;
-using AuthService.Dtos.Auth;
 using AuthService.Models;
 using AuthService.Services.Implementations;
 using AuthService.Services.ServicesAbstractions;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Shared.JwtConfig;
+using AuthService.Consumers;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +35,8 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddMassTransit(x =>
 {
     x.AddRequestClient<Shared.Events.UserCreatedEvent>();
+    x.AddConsumer<UserDeletedEventConsumer>();
+
     x.UsingRabbitMq((context, cfg) =>
     {
         cfg.Host("localhost", "/", h =>
@@ -44,30 +44,14 @@ builder.Services.AddMassTransit(x =>
             h.Username("guest");
             h.Password("guest");
         });
+        cfg.ConfigureEndpoints(context);
+
     });
 });
 
+
 builder.Services.AddSharedJwtAuth(builder.Configuration);
 
-//builder.Services.AddAuthentication(options =>
-//{
-//    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-//})
-//               .AddJwtBearer(options =>
-//               {
-//                   options.TokenValidationParameters = new TokenValidationParameters
-//                   {
-//                       ValidateIssuer = true,
-//                       ValidateAudience = true,
-//                       ValidateLifetime = true,
-//                       ValidateIssuerSigningKey = true,
-//                       ValidIssuer = builder.Configuration["JWT:Issuer"],
-//                       ValidAudience = builder.Configuration["JWT:Audience"],
-//                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
-//                       ClockSkew = TimeSpan.Zero 
-//                   };
-//               });
 
 var app = builder.Build();
 

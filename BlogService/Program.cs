@@ -1,9 +1,11 @@
+using BlogService.Consumers;
 using BlogService.Database.Contexts;
 using BlogService.Mappers;
 using BlogService.Repos.Contracts;
 using BlogService.Repos.Implementations;
 using BlogService.Services.Contracts;
 using BlogService.Services.Implementations;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Shared.JwtConfig;
 
@@ -26,6 +28,23 @@ builder.Services.AddDbContext<BlogDbContext>(opts =>
 });
 
 builder.Services.AddSharedJwtAuth(builder.Configuration);
+
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<UserDeletedConsumer>();
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("localhost", "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
+        cfg.ConfigureEndpoints(context);
+
+    });
+    
+});
 
 
 var app = builder.Build();

@@ -1,4 +1,6 @@
-﻿using UsersService.Dtos.Result;
+﻿using MassTransit;
+using Shared.Events;
+using UsersService.Dtos.Result;
 using UsersService.Dtos.Users;
 using UsersService.Models;
 using UsersService.Repos.Contracts;
@@ -6,7 +8,8 @@ using UsersService.Services.Contracts;
 
 namespace UsersService.Services.Implementations
 {
-    public class UserService(IUserRepo _userRepo) : IUserService
+    public class UserService(IUserRepo _userRepo, 
+        IPublishEndpoint _publishEndpoint) : IUserService
     {
         public async Task<ServiceResult<UserDto>> CreateAsync(CreateUserDto createUserDto)
         {
@@ -40,6 +43,10 @@ namespace UsersService.Services.Implementations
             var result = await _userRepo.DeleteAsync(user);
             if(!result)
                 return ServiceResult<string>.Faliure(ResultType.UnAuthorized, "Failed to delete user.");
+           
+            await _publishEndpoint.Publish(new UserDeletedEvent { UserId = userId });
+
+
             return ServiceResult<string>.Success("User deleted successfully.");
         }
 

@@ -1,12 +1,12 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 using AuthService.Dtos.Auth;
 using AuthService.Dtos.Result;
+using AuthService.Models;
 using AuthService.Services.ServicesAbstractions;
 using AuthService.Utils;
-using AuthService.Models;
-using Microsoft.EntityFrameworkCore;
 using MassTransit;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Shared.Events;
 using Shared.JwtConfig;
 
@@ -88,6 +88,8 @@ namespace AuthService.Services.Implementations
                 Bio = registerDto.Bio,
                 AvatarUrl = registerDto.AvatarUrl
             });
+
+
 
             if (!response.Message.IsSuccess)
             {

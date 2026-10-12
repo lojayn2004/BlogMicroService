@@ -2,7 +2,6 @@
   <Project Path="ApiGateway/ApiGateway.csproj" />
   <Project Path="AuthService/AuthService.csproj" />
   <Project Path="BlogService/BlogService.csproj" />
-  <Project Path="EmailService/EmailService.csproj" />
   <Project Path="Shared/Shared.csproj" />
   <Project Path="UserService/UsersService.csproj" />
 </Solution>

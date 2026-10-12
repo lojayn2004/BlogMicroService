@@ -8,7 +8,7 @@ namespace BlogService.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+ 
     public class BlogsController(IBlogService _blogService): ApiBaseController
     {
 
