@@ -1,6 +1,17 @@
 @BlogService_HostAddress = http://localhost:5237
+@token = replace-with-access-token
 
-GET {{BlogService_HostAddress}}/weatherforecast/
+### Create a blog with the authenticated author's avatar
+POST {{BlogService_HostAddress}}/api/blogs
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "A sample blog",
+  "body": "Blog content",
+  "authorAvatarUrl": "https://example.com/avatar.png"
+}
+
+### Query blogs (responses include authorName and authorAvatarUrl)
+GET {{BlogService_HostAddress}}/api/blogs
 Accept: application/json
-
-###

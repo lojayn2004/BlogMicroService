@@ -47,8 +47,11 @@ namespace BlogService.Controllers
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
-            Console.WriteLine($"UserId: {userId}, Title: {createBlogDto.Title}, Body: {createBlogDto.Body}");
-            var createBlogResult =  _blogService.CreateBlogAsync(userId, createBlogDto);
+            var authorName = User.FindFirstValue(ClaimTypes.Name);
+            if (string.IsNullOrEmpty(authorName))
+                return Unauthorized();
+
+            var createBlogResult = _blogService.CreateBlogAsync(userId, authorName, createBlogDto);
             return GetActionResult(createBlogResult);
         }
 

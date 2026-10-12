@@ -16,6 +16,12 @@ namespace BlogService.Database.Configurations
             builder.Property(e => e.AuthorId)
                    .HasMaxLength(450);
 
+            builder.Property(e => e.AuthorName)
+                   .HasMaxLength(256);
+
+            builder.Property(e => e.AuthorAvatarUrl)
+                   .HasMaxLength(2048);
+
             builder.Property(e => e.Title)
                    .HasMaxLength(500);
 

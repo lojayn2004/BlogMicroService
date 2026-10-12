@@ -10,10 +10,12 @@ namespace BlogService.Services.Implementations
 {
     public class BlogsService(IBlogRepo _blogRepo, IMapper _mapper): IBlogService
     {
-        public ServiceResult<BlogDto> CreateBlogAsync(string userId, CreateBlogDto createBlogDto)
+        public ServiceResult<BlogDto> CreateBlogAsync(string userId, string authorName, CreateBlogDto createBlogDto)
         {
             var blog = _mapper.Map<Blog>(createBlogDto);
             blog.AuthorId = userId;
+            blog.AuthorName = authorName;
+            blog.AuthorAvatarUrl = createBlogDto.AuthorAvatarUrl;
             _blogRepo.Create(blog);
             return ServiceResult<BlogDto>.Success(_mapper.Map<BlogDto>(blog));
         }

@@ -15,6 +15,5 @@ namespace UsersService.Services.Contracts
 
         Task<ServiceResult<UserDto>> GetByIdAsync(string id);
 
-        Task<ServiceResult<IReadOnlyList<UserDto>>> GetAllAsync();
     }
 }

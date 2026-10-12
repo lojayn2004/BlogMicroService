@@ -50,10 +50,6 @@ namespace UsersService.Services.Implementations
             return ServiceResult<string>.Success("User deleted successfully.");
         }
 
-        public Task<ServiceResult<IReadOnlyList<UserDto>>> GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<ServiceResult<UserDto>> GetByIdAsync(string userId)
         {
@@ -84,6 +80,13 @@ namespace UsersService.Services.Implementations
             if (!result) 
                 return ServiceResult<UserDto>.Faliure(ResultType.Validation, "Failed to update user.");
 
+            await _publishEndpoint.Publish(new UserUpdatedEvent
+            {
+                UserId = user.UserId,
+                DisplayName = user.DisplayName,
+                AvatarUrl = user.AvatarUrl
+            });
+
             return ServiceResult<UserDto>.Success(new UserDto
             {
                 Id = user.UserId,
@@ -95,4 +98,3 @@ namespace UsersService.Services.Implementations
         }
     }
 }
-

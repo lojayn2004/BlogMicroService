@@ -10,7 +10,7 @@ namespace BlogService.Services.Contracts
 
         Task<ServiceResult<BlogDto?>> GetBlogByIdAsync(Guid id);
 
-        ServiceResult<BlogDto> CreateBlogAsync(string userId, CreateBlogDto createBlogDto);
+        ServiceResult<BlogDto> CreateBlogAsync(string userId, string authorName, CreateBlogDto createBlogDto);
 
         Task<ServiceResult<BlogDto>> UpdateBlogAsync(string userId, BlogDto blogDto);
 

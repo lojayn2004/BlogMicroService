@@ -12,6 +12,11 @@ namespace BlogService.Mappers
 
 
             CreateMap<Blog, BlogDto>();
+            CreateMap<BlogDto, Blog>()
+                .ForMember(blog => blog.AuthorId, options => options.Ignore())
+                .ForMember(blog => blog.AuthorName, options => options.Ignore())
+                .ForMember(blog => blog.AuthorAvatarUrl, options => options.Ignore())
+                .ForMember(blog => blog.CreatedAt, options => options.Ignore());
         }
     }
 }

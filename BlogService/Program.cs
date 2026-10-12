@@ -32,6 +32,7 @@ builder.Services.AddSharedJwtAuth(builder.Configuration);
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<UserDeletedConsumer>();
+    x.AddConsumer<UserUpdatedConsumer>();
 
     x.UsingRabbitMq((context, cfg) =>
     {
