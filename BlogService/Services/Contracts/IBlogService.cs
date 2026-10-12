@@ -6,7 +6,7 @@ namespace BlogService.Services.Contracts
     public interface IBlogService
     {
 
-        Task<ServiceResult<IReadOnlyList<BlogDto>>> GetBlogsAsync();
+        Task<ServiceResult<IReadOnlyList<BlogDto>>> GetBlogsAsync(BlogQuerySearch blogQuerySearch);
 
         Task<ServiceResult<BlogDto?>> GetBlogByIdAsync(Guid id);
 

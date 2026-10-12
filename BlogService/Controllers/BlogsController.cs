@@ -13,9 +13,9 @@ namespace BlogService.Controllers
     {
 
         [HttpGet]
-        public async Task<IActionResult> GetBlogsAsync()
+        public async Task<IActionResult> GetBlogsAsync([FromQuery] BlogQuerySearch blogQuerySearch)
         {
-            var blogResult = await _blogService.GetBlogsAsync();
+            var blogResult = await _blogService.GetBlogsAsync(blogQuerySearch);
             return GetActionResult(blogResult);
 
         }

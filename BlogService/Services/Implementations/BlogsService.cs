@@ -4,6 +4,7 @@ using BlogService.Dtos.Result;
 using BlogService.Models;
 using BlogService.Repos.Contracts;
 using BlogService.Services.Contracts;
+using BlogService.Specifications;
 
 namespace BlogService.Services.Implementations
 {
@@ -39,9 +40,9 @@ namespace BlogService.Services.Implementations
         }
 
 
-        public async Task<ServiceResult<IReadOnlyList<BlogDto>>> GetBlogsAsync()
+        public async Task<ServiceResult<IReadOnlyList<BlogDto>>> GetBlogsAsync(BlogQuerySearch blogQuerySearch)
         {
-            var blogs = await _blogRepo.GetAllAsync();
+            var blogs = await _blogRepo.GetAllAsync(new BlogSpecification(blogQuerySearch));
             var mappedBlogs = _mapper.Map<IReadOnlyList<BlogDto>>(blogs);
             return ServiceResult<IReadOnlyList <BlogDto>>.Success(mappedBlogs);
         }

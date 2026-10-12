@@ -2,6 +2,7 @@
 using BlogService.Database.Contexts;
 using BlogService.Models;
 using BlogService.Repos.Contracts;
+using BlogService.Specifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogService.Repos.Implementations
@@ -23,6 +24,12 @@ namespace BlogService.Repos.Implementations
         public async Task<IReadOnlyList<Blog>> GetAllAsync()
         {
             return await _blogContext.Blogs.ToListAsync();
+        }
+
+        public async Task<IReadOnlyList<Blog>> GetAllAsync(BaseSpeification<Blog> speification)
+        {
+            var query = _blogContext.Blogs.AsQueryable();
+            return await QueryEvaluator.GetQuery(query, speification).ToListAsync();
         }
 
         public async Task<Blog?> GetByIdAsync(Guid id)
