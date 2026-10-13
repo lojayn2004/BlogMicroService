@@ -29,6 +29,7 @@ builder.Services.AddDbContext<BlogDbContext>(opts =>
 
 builder.Services.AddSharedJwtAuth(builder.Configuration);
 
+// Configure RabbitMQ consumers for user lifecycle events.
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<UserDeletedConsumer>();
