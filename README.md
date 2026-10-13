@@ -15,6 +15,8 @@ This repository contains a lightweight blog platform split into multiple indepen
 The solution demonstrates a simple microservice architecture where each service owns its own database and integration events are used to keep related data in sync.
 
 ## Architecture
+![Blog Microservices Architecure](arch_image.png)
+
 
 
 ## Services
